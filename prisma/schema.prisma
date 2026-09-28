@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Job {
+  id              String    @id @default(cuid())
+  userId          String
+  type            String
+  payload         Json
+  status          JobStatus @default(pending)
+  attempts        Int       @default(0)
+  maxAttempts     Int       @default(5)
+  lastError       String?
+  runAt           DateTime  @default(now())
+  startedAt       DateTime?
+  finishedAt      DateTime?
+  idempotencyKey  String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  output          JobOutput?
+  events          JobEvent[]
+
+  @@unique([userId, idempotencyKey])
+  @@index([status, runAt])
+}
+
+enum JobStatus {
+  pending
+  processing
+  succeeded
+  dead
+}
+
+model JobOutput {
+  id                 String   @id @default(cuid())
+  jobId              String   @unique
+  providerMessageId  String?
+  raw                Json?
+  createdAt          DateTime @default(now())
+
+  job                Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+}
+
+model JobEvent {
+  id            String     @id @default(cuid())
+  jobId         String
+  fromStatus    JobStatus?
+  toStatus      JobStatus
+  message       String?
+  actingUserId  String?
+  createdAt     DateTime   @default(now())
+
+  job           Job        @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@index([jobId, createdAt])
+}
