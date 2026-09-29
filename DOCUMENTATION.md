@@ -169,49 +169,49 @@ Scheduled on `setInterval` of `SWEEP_INTERVAL_MS` (default 60s), separate from t
 
 ### Evidence 1 — Enqueue → pending (FR1)
 
-![Pending job evidence](evidence/01-pending-job.png.png)
+![Pending job evidence](evidence/01-pending-job.png)
 
 Proves `FR1`: a job row is created and shown in `pending` on the `/jobs` page immediately after enqueue, before the worker claims it.
 
 ### Evidence 2 — First claim → processing (FR2/FR4)
 
-![Processing job evidence](evidence/02-processing-job.png.png)
+![Processing job evidence](evidence/02-processing-job.png)
 
 Proves `FR2`/`FR4`: after the worker claims a job, it shows `processing` (captured during a deliberate temporary 60-second processing hold for evidence).
 
 ### Evidence 3 — Successful send → succeeded (FR4)
 
-![Succeeded job evidence](evidence/03-succeeded-job.png.png)
+![Succeeded job evidence](evidence/03-succeeded-job.png)
 
 Proves `FR4`: a job reaches `succeeded`, with attempts and timestamps visible on `/jobs`.
 
 ### Evidence 4 — Retry backoff growing (FR6)
 
-![Backoff delays growing evidence](evidence/04-backoff-delays-growing.png.png)
+![Backoff delays growing evidence](evidence/04-backoff-delays-growing.png)
 
 Proves `FR6`: retry scheduling shows growing delays between attempts (exponential backoff).
 
 ### Evidence 5 — Concurrency cap (FR3)
 
-![Concurrency cap evidence](evidence/05-concurrency-cap-50-jobs.png.png)
+![Concurrency cap evidence](evidence/05-concurrency-cap-50-jobs.png)
 
 Proves `FR3`: 50 queued jobs are processed with at most `WORKER_CONCURRENCY` (5) in flight.
 
 ### Evidence 6 — Stuck job, before recovery (FR8 precondition)
 
-![Stuck job before kill evidence](evidence/06-stuck-job-before-kill.png.png)
+![Stuck job before kill evidence](evidence/06-stuck-job-before-kill.png)
 
 Proves the `FR8` precondition: a job is left in `processing` (worker stopped/crashed).
 
 ### Evidence 7 — Dead-letter view (FR9)
 
-![Dead letter view evidence](evidence/07-dead-letter-view.png.png)
+![Dead letter view evidence](evidence/07-dead-letter-view.png)
 
 Proves `FR9`: the dead-letter UI lists dead jobs with error detail and a retry action.
 
 ### Evidence 8 — Stuck job, after recovery (FR8/FR9)
 
-![Stuck job after recovery evidence](evidence/08-stuck-job-after-recovery.png.png)
+![Stuck job after recovery evidence](evidence/08-stuck-job-after-recovery.png)
 
 Proves `FR8`/`FR9`: the stuck job returns to a non-`processing` state after worker restart / manual retry.
 
